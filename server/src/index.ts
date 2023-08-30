@@ -1,15 +1,7 @@
-import Express from 'express'
-import { createServer } from 'http'
-import { Server, Socket } from 'socket.io'
+import { ServerController } from "./http"
 
-const app = Express()
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-    path: "/room"
+const server = new ServerController()
+
+server.httpServer.listen(3333, () => {
+    console.log("Server is running on port 3333")
 })
-
-io.on('connection', (socket: Socket) => {
-    console.log(socket)
-})
-
-httpServer.listen(3000)
