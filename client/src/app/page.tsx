@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { EVENT } from "../utils";
 
-const socket = io("http://localhost:3001", {
+const socket = io("http://localhost:3333", {
   withCredentials: false,
 });
 
@@ -17,7 +17,6 @@ interface FormDataI {
 export default function Home() {
   const router = useRouter();
 
-    // change to ref
   const [formData, setFormData] = useState<FormDataI>({
     name: "",
   });
@@ -31,7 +30,7 @@ export default function Home() {
     event.preventDefault();
     event.stopPropagation();
 
-      const { name } = formData;
+    const { name } = formData;
     socket.emit(
       EVENT.PLAYER_JOINED,
       { player: { name } },
@@ -63,7 +62,7 @@ export default function Home() {
           type="text"
           id="name"
           name="name"
-          value={name}
+          value={formData.name}
           onChange={handleChange}
           required
           aria-required="true"
