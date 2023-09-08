@@ -1,11 +1,9 @@
-import { EventsController } from "./controllers";
 import { Events, ServerRepository } from "./repositories";
 
-const eventsController = new EventsController();
-const events = new Events(eventsController);
+const events = new Events();
 const server = new ServerRepository(events);
 
-server.events_init();
+const PORT = 3333
 
-// @ts-ignore
-server.httpServer.listen(3333, () => { console.log("Server is running on port: 3333") });
+server.init(PORT)
+server.events_init();

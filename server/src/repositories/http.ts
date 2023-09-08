@@ -18,29 +18,45 @@ export class ServerRepository {
         // @ts-ignore
         this.httpServer = createServer(this.app);
         // @ts-ignore
-        this.io = new Server(this.httpServer);
+        this.io = new Server(this.httpServer, {
+            transports: ["websocket", "polling"],
+            cors: {
+                origin: "*",
+                credentials: false
+            }
+        });
     }
 
-    onConnection() {
+    private onConnection() {
         this.io.on(EVENT.CONNECTION, this.events.connection);
     }
 
-    onDisconnect() {
+    private onDisconnect() {
         this.io.on(EVENT.DISCONNECT, this.events.disconnect);
     }
 
-    onPlayerConnected() {
+    private onPlayerConnected() {
         this.io.on(EVENT.PLAYER_CONNECTED, this.events.playerConnect);
     }
 
-    onPlayerDisconnected() {
+    private onPlayerDisconnected() {
         this.io.on(EVENT.PLAYER_DISCONNECTED, this.events.playerDisconnect);
     }
 
-    events_init() {
+    private onRoomCreated() {
+        this.io.on(EVENT.NEW_ROOM, this.events.roomCreated);
+    }
+
+    public init(port: number) {
+        // @ts-ignore
+        this.httpServer.listen(port, () => { console.log("Server is running on port: 3333") });
+    }
+
+    public events_init() {
         this.onConnection();
         this.onDisconnect();
         this.onPlayerConnected();
         this.onPlayerDisconnected();
+        this.onRoomCreated();
     }
 }

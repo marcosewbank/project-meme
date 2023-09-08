@@ -1,26 +1,38 @@
 import { Socket } from "socket.io";
-import { EventsController } from "../controllers";
+import { EVENT } from "../constants";
+
+interface Room {
+    name: string
+    id: number
+}
 
 export class Events {
-    private eventController: EventsController;
+    private rooms: Room[]
 
-    constructor(e: EventsController) {
-        this.eventController = e;
+    constructor() {
+        this.rooms = [] as Room[]
     }
 
-    public connection(socket: Socket) {
-        socket.on("", this.eventController.connect);
+    // public methods
+    public connection(socket: Socket): void {
+        socket.emit(EVENT.ROOMS_CREATED, this.rooms)
     }
 
     public disconnect(socket: Socket) {
-        socket.on("", this.eventController.disconnect);
+        console.log(socket)
+    }
+
+    public roomCreated(socket: Socket) {
+        console.log('working')
+        console.log(socket)
     }
 
     public playerConnect(socket: Socket) {
-        socket.on("", this.eventController.playerConnect);
+        console.log(socket)
     }
 
     public playerDisconnect(socket: Socket) {
-        socket.on("", this.eventController.playerDisconnect);
+        console.log(socket)
     }
+
 }
