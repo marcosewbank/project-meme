@@ -1,3 +1,6 @@
+// prettier-ignore
+"use client"
+
 import React, { createContext, useContext } from "react";
 
 const SocketContext = createContext<null>(null);
