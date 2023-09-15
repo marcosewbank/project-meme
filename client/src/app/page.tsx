@@ -1,81 +1,147 @@
 "use client";
 
-import { io } from "socket.io-client";
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent } from "react";
 
-import { EVENT } from "../utils";
+// type CreateRoomResponse<T = "error" | "success"> = T extends "success"
+//   ? {
+//       type: T;
+//       room: string;
+//       public: boolean;
+//     }
+//   : {
+//       type: T;
+//       message: string;
+//     };
 
-const socket = io("http://localhost:3333", {
-  withCredentials: false,
-});
-
-interface FormDataI {
-  name: string;
+interface RoomsData {
+  [roomName: string]: number;
 }
 
+// async function Rooms() {
+//   const rooms: RoomsData = await (
+//     await fetch(`http://localhost:3333/rooms`)
+//   ).json();
+//   return { rooms };
+// }
+
 export default function Home() {
-  const router = useRouter();
+  // const rooms = Rooms();
+  // console.log("🚀 ~ file: page.tsx:38 ~ Home ~ rooms:", rooms);
 
-  const [formData, setFormData] = useState<FormDataI>({
-    name: "",
-  });
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const handleSubmit = (event: FormEvent) => {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    event.stopPropagation();
 
-    const { name } = formData;
-    socket.emit(
-      EVENT.PLAYER_JOINED,
-      { player: { name } },
-      (response: { id: string }) => {
-        window.localStorage.setItem("auth", response.id);
+    console.log("🚀 ~ file: page.tsx:40 ~ onSubmit ~ event:", event);
 
-        return router.push(`/room/${response.id}`);
-      }
-    );
-  };
+    // if (room.name == "") {
+    //   alert("Input is empty");
+    //   return;
+    // }
+
+    // let response: CreateRoomResponse = await(
+    //   await fetch(`${process.env.FRONTEND_URL}/createRoom`, {
+    //     method: "POST",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       name: room.name,
+    //       public: room.public,
+    //     }),
+    //   })
+    // ).json();
+
+    // if (response.type == "success") {
+    //   redirect(`/${response.room}`);
+    // } else {
+    //   alert(response.message);
+    // }
+  }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center p-4 gap-4"
-      >
-        <label
-          htmlFor="name"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Type your nickname
-        </label>
+    <main className="flex flex-row w-full min-h-screen items-center justify-center p-4 max-w-4xl m-auto">
+      <div className="grid flex-grow card bg-base-300 rounded-box place-items-center">
+        <form className="flex flex-col p-4 gap-4 w-full" onSubmit={onSubmit}>
+          <label
+            htmlFor="name"
+            className="flex flex-col items-start label cursor-pointer gap-2"
+          >
+            <span className="label-text hidden">Type your nickname</span>
+            <input
+              type="text"
+              className="input input-bordered input-primary w-full"
+              placeholder="Type your nickname"
+            />
+          </label>
+          <div className="form-control">
+            <div className="collapse bg-base-200">
+              <input type="checkbox" className="peer" />
 
-        <input
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          minLength={3}
-          maxLength={14}
-          type="text"
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          aria-required="true"
-          autoComplete="off"
-        />
+              <div className="collapse-title">Create room</div>
+              <div className="collapse-content">
+                <input
+                  type="text"
+                  className="input input-bordered input-primary w-full"
+                  placeholder="Room name"
+                />
+                <label className="label cursor-pointer flex justify-start gap-3">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-primary"
+                  />
+                  <span className="label-text min-w-20">Public room</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <button className="btn btn-primary" type="submit">
+            Submit
+          </button>
+        </form>
+      </div>
+      <div className="divider divider-horizontal" />
 
-        <button
-          type="submit"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-          Jogar
-        </button>
-      </form>
+      <div className="grid flex-grow card bg-base-300 rounded-box place-items-center">
+        <div className="flex flex-col justify-start items-start p-4 gap-4 w-full">
+          <div className="overflow-x-auto">
+            <table className="table">
+              {/* head */}
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Server</th>
+                  <th>players</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* row 1 */}
+                <tr>
+                  <th>1</th>
+                  <td>Cy Ganderton</td>
+                  <td>Quality Control Specialist</td>
+                </tr>
+                {/* row 2 */}
+                <tr>
+                  <th>2</th>
+                  <td>Hart Hagerty</td>
+                  <td>Desktop Support Technician</td>
+                </tr>
+                <tr>
+                  <th>2</th>
+                  <td>Hart Hagerty</td>
+                  <td>Desktop Support Technician</td>
+                </tr>
+                <tr>
+                  <th>2</th>
+                  <td>Hart Hagerty</td>
+                  <td>Desktop Support Technician</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
