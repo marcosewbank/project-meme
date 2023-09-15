@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
 import cors from "cors";
-import express from "express";
-import { createServer } from "http";
 import { Server } from "socket.io";
 import { checkWinner } from "./helpers";
+import { createServer } from "http";
+import express from "express";
 
 import type {
   ClientToServerEvents,
@@ -17,7 +17,7 @@ dotenv.config({ path: "../../.env" });
 
 const port = 3333;
 const app = express()
-  .use(cors({ origin: process.env.FRONTEND_URL }))
+  .use(cors({ origin: "*" }))
   .use(express.json());
 const httpServer = createServer(app);
 const io = new Server<
@@ -28,7 +28,7 @@ const io = new Server<
 >(httpServer, {
   serveClient: false,
   cors: {
-    origin: [process.env.FRONTEND_URL!],
+    origin: "*",
   },
   cleanupEmptyChildNamespaces: true,
 });
@@ -37,10 +37,10 @@ let data: {
   [namespace: string]: GameData;
 } = {};
 
+console.log("🚀 ~ file: index.ts:37 ~ data:", data);
+
 app.get("/rooms", (_req, res) => {
   let rooms: Record<string, number> = {};
-
-  console.log("🚀 ~ file: index.ts:42 ~ app.get ~ rooms:", rooms);
 
   for (let roomName of Object.keys(data).filter((room) => data[room].public)) {
     rooms[roomName] = io.of(roomName).sockets.size;
@@ -69,7 +69,12 @@ app.post("/createRoom", (req, res) => {
     });
   }
 
-  data[`/${req.body.name}`] = {
+  console.log(
+    "🚀 ~ file: index.ts:73 ~ app.post ~ req.body.name:",
+    req.body.name
+  );
+
+  data[req.body.name] = {
     public: req.body.public,
     board: [
       ["", "", ""],
