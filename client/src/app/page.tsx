@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useDebounce from "@/hooks/useDebounce";
+import Link from "next/link";
 
 type CreateRoomResponse<T = "error" | "success"> = T extends "success"
   ? {
@@ -15,15 +16,16 @@ type CreateRoomResponse<T = "error" | "success"> = T extends "success"
       message: string;
     };
 
-interface RoomsData {
-  [roomName: string]: number;
+interface RoomsList {
+  name: string;
+  players: number;
 }
 
 const url = "http://localhost:3333";
 
 export default function Home() {
   const router = useRouter();
-  const [rooms, setRooms] = useState<RoomsData>({});
+  const [rooms, setRooms] = useState<RoomsList[]>([]);
   console.log("🚀 ~ file: page.tsx:27 ~ rooms:", rooms);
   const [player, setPlayer] = useState<string>("");
   const debouncePlayer = useDebounce(player, 500);
@@ -55,6 +57,7 @@ export default function Home() {
     const roomName = (event.target as HTMLFormElement).elements.namedItem(
       "roomName"
     ) as HTMLInputElement;
+
     const publicRoom = (event.target as HTMLFormElement).elements.namedItem(
       "publicRoom"
     ) as HTMLInputElement;
@@ -78,7 +81,7 @@ export default function Home() {
       ).json();
 
       if (response.type == "success") {
-        router.push(`/${response.room}`);
+        router.push(`/room/${response.room}`);
       } else {
         alert(response.message);
       }
@@ -87,8 +90,8 @@ export default function Home() {
 
   return (
     <main className="flex flex-row w-full min-h-screen items-center justify-center p-4 max-w-4xl m-auto">
-      <div className="flex">
-        <div className="grid flex-grow card bg-base-300 rounded-box place-items-center">
+      <div className="flex w-full h-full">
+        <div className="grid flex-grow card bg-base-300 rounded-box place-items-center w-full">
           <label
             htmlFor="name"
             className="flex flex-col items-start label cursor-pointer gap-2 p-4 w-full"
@@ -131,38 +134,21 @@ export default function Home() {
             </button>
           </form>
         </div>
+
         <div className="divider divider-horizontal" />
 
-        <div className="grid flex-grow card bg-base-300 rounded-box place-items-center">
+        <div className="flex flew-grow card bg-base-300 rounded-box place-items-center w-full">
           <div className="flex flex-col justify-start items-start p-4 gap-4 w-full">
-            <div className="overflow-x-auto">
-              <table className="table">
-                {/* head */}
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>Server</th>
-                    <th>players</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(rooms).map((room: any, index: number) => {
-                    console.log(
-                      "🚀 ~ file: page.tsx:149 ~ {Object.entries ~ room:",
-                      room
-                    );
-                    return (
-                      <tr key={index}>
-                        <th>1</th>
-                        <td>Cy Ganderton</td>
-                        <td>Quality Control Specialist</td>
-                      </tr>
-                    );
-                  })}
-                  {/* row 1 */}
-                </tbody>
-              </table>
-            </div>
+            {rooms?.map(({ name, players }: RoomsList, index: number) => (
+              <div key={`${name}-${index}`} className="indicator">
+                <span className="indicator-item badge badge-secondary">
+                  {players}
+                </span>
+                <Link className="btn" href={`/room/${name}`}>
+                  <td>{name}</td>
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </div>

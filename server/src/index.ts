@@ -11,6 +11,7 @@ import type {
   InterServerEvents,
   SocketData,
   GameData,
+  RoomsList,
 } from "./types";
 
 dotenv.config({ path: "../../.env" });
@@ -37,14 +38,20 @@ let data: {
   [namespace: string]: GameData;
 } = {};
 
-console.log("🚀 ~ file: index.ts:37 ~ data:", data);
-
 app.get("/rooms", (_req, res) => {
-  let rooms: Record<string, number> = {};
+  let rooms: RoomsList[] = [];
+  console.log("🚀 ~ file: index.ts:37 ~ data:", data);
 
   for (let roomName of Object.keys(data).filter((room) => data[room].public)) {
-    rooms[roomName] = io.of(roomName).sockets.size;
+    const players = io.of(roomName).sockets.size;
+
+    console.log("🚀 ~ file: index.ts:48 ~ app.get ~ players:", players);
+    console.log("🚀 ~ file: index.ts:50 ~ app.get ~ roomName:", roomName);
+
+    rooms.push({ name: roomName, players });
   }
+
+  console.log("🚀 ~ file: index.ts:43 ~ app.get ~ rooms:", rooms);
 
   return res.json(rooms);
 });

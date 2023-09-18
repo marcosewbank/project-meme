@@ -32,10 +32,16 @@ interface GameData {
   };
 }
 
+interface RoomsList {
+  name: string;
+  players: number;
+}
+
 export {
   ServerToClientEvents,
   ClientToServerEvents,
   InterServerEvents,
   SocketData,
   GameData,
+  RoomsList,
 };
