@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.10",
     "@types/node": "20.5.7",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
@@ -25,6 +26,10 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
-    "daisyui": "^3.7.4"
+    "bufferutil": "4.0.7",
+    "daisyui": "^3.7.4",
+    "supports-color": "8.1.1",
+    "utf-8-validate": "5.0.10",
+    "webpack-node-externals": "^3.0.0"
   }
 }
