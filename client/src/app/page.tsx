@@ -26,7 +26,6 @@ const url = "http://localhost:3333";
 export default function Home() {
   const router = useRouter();
   const [rooms, setRooms] = useState<RoomsList[]>([]);
-  console.log("🚀 ~ file: page.tsx:27 ~ rooms:", rooms);
   const [player, setPlayer] = useState<string>("");
   const debouncePlayer = useDebounce(player, 500);
 
