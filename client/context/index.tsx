@@ -1,15 +1,12 @@
 "use client";
-
-import io from "socket.io-client";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import io from "socket.io-client";
 
 export const socket = io("http://localhost:3001");
 const SocketContext = createContext<any>(null);
 
 const SocketProvider: React.FC<any> = (props) => {
   const [value, setValue] = useState();
-
-  console.log("🚀 ~ file: index.tsx:14 ~ value:", value);
 
   useEffect(() => {
     socket.on("players-list", (data) => {

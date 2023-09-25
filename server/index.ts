@@ -32,9 +32,11 @@ io.on("connection", (socket) => {
       name: player,
     };
 
-    console.log("🚀 ~ file: index.ts:37 ~ socket.on ~ players:", players);
+    io.sockets.emit("players-list", players);
+  });
 
-    socket.broadcast.emit("players-list", players);
+  socket.on("disconnect", () => {
+    delete players[socket.id];
   });
 });
 
