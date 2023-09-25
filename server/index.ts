@@ -6,34 +6,37 @@ const server = http.createServer(app)
 import { Server } from 'socket.io'
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: "*",
+    methods: ["GET", "POST"],
   },
-})
+});
 
-type Point = { x: number; y: number }
+type Point = { x: number; y: number };
 
-type DrawLine = {
-  prevPoint: Point | null
-  currentPoint: Point
-  color: string
-}
+type PlayersT = {
+  [key: string]: {
+    score: number;
+    hand: string[];
+    name: string;
+  };
+};
 
-io.on('connection', (socket) => {
-  socket.on('client-ready', () => {
-    socket.broadcast.emit('get-canvas-state')
-  })
+let game: any = {};
+let players: PlayersT = {};
 
-  socket.on('canvas-state', (state) => {
-    console.log('received canvas state')
-    socket.broadcast.emit('canvas-state-from-server', state)
-  })
+io.on("connection", (socket) => {
+  socket.on("player-joined", (player: string) => {
+    players[socket.id] = {
+      score: 0,
+      hand: [""],
+      name: player,
+    };
 
-  socket.on('draw-line', ({ prevPoint, currentPoint, color }: DrawLine) => {
-    socket.broadcast.emit('draw-line', { prevPoint, currentPoint, color })
-  })
+    console.log("🚀 ~ file: index.ts:37 ~ socket.on ~ players:", players);
 
-  socket.on('clear', () => io.emit('clear'))
-})
+    socket.broadcast.emit("players-list", players);
+  });
+});
 
 server.listen(3001, () => {
   console.log('✔️ Server listening on port 3001')
