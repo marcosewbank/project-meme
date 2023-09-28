@@ -4,6 +4,8 @@ const app = express()
 const server = http.createServer(app)
 
 import { Server } from 'socket.io'
+import type { PlayersT } from "./types/typing";
+
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -11,17 +13,12 @@ const io = new Server(server, {
   },
 });
 
-type Point = { x: number; y: number };
-
-type PlayersT = {
-  [key: string]: {
-    score: number;
-    hand: string[];
-    name: string;
-  };
+let game: any = {
+  phase: "",
+  phrase: "",
+  players: {},
 };
 
-let game: any = {};
 let players: PlayersT = {};
 
 io.on("connection", (socket) => {
