@@ -4,7 +4,9 @@ const app = express()
 const server = http.createServer(app)
 
 import { Server } from 'socket.io'
-import type { PlayersT } from "./types/typing";
+import type { CardT, GameT, PlayersT } from "./types/typing";
+import { phrases } from "./mock/phrases";
+import { gifs } from "./mock/gifs";
 
 const io = new Server(server, {
   cors: {
@@ -13,27 +15,50 @@ const io = new Server(server, {
   },
 });
 
-let game: any = {
-  phase: "",
-  phrase: "",
+let game: GameT = {
+  phase: "waiting",
+  phrase: phrases,
+  deck: gifs,
   players: {},
 };
 
-let players: PlayersT = {};
+const shuffle = () => game.deck.sort(() => Math.random() - 0.5);
+
+const draw = (deleteCount = 5, start = 0) =>
+  game.deck.splice(start, deleteCount);
 
 io.on("connection", (socket) => {
+  console.log("🚀 ~ file: index.ts:23 ~ game:", game.deck.length);
+  console.log("🚀 ~ file: index.ts:27 ~ players:", game.players);
+
   socket.on("player-joined", (player: string) => {
-    players[socket.id] = {
+    game.players[socket.id] = {
       score: 0,
-      hand: [""],
+      hand: [],
       name: player,
     };
 
-    io.sockets.emit("players-list", players);
+    io.sockets.emit("game-update", game);
+  });
+
+  socket.on("draw-card", (player) => {
+    const cardsOnHand = game.players[player].hand.length;
+    const maxOnHand = 5;
+    const cardsToBuy = maxOnHand - cardsOnHand;
+
+    console.log("🚀 ~ file: index.ts:48 ~ socket.on ~ cardsToBuy:", cardsToBuy);
+
+    if (cardsToBuy > 0) {
+      const playerDraw = draw(cardsToBuy);
+
+      game.players[player].hand = playerDraw;
+    }
+
+    io.sockets.emit("game-update", game);
   });
 
   socket.on("disconnect", () => {
-    delete players[socket.id];
+    delete game.players[socket.id];
   });
 });
 

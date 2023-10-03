@@ -1,7 +1,7 @@
 export type PlayersT = {
   [key: string]: {
     score: number;
-    hand: string[];
+    hand: CardT[];
     name: string;
   };
 };
@@ -11,5 +11,14 @@ type PhaseT = "waiting" | "selection" | "vote";
 // selection - Game is already started, players can read the phrase
 
 export type GameT = {
-  phrase: PhaseT;
+  phase: PhaseT;
+  phrase: string[];
+  deck: CardT[];
+  players: PlayersT;
+};
+
+export type CardT = {
+  id: string;
+  src: string;
+  slug?: string;
 };

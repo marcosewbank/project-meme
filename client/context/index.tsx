@@ -9,12 +9,13 @@ const SocketProvider: React.FC<any> = (props) => {
   const [value, setValue] = useState();
 
   useEffect(() => {
-    socket.on("players-list", (data) => {
+    socket.on("game-update", (data) => {
+      console.log("🚀 ~ file: index.tsx:13 ~ socket.on ~ data:", data);
       setValue(data);
     });
 
     return () => {
-      socket.off("players-list");
+      socket.off("game-update");
     };
   }, []);
 

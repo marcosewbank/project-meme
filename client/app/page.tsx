@@ -4,24 +4,41 @@ import Image from "next/image";
 
 import Login from "../components/login";
 import { useSocketContext } from "../context";
+import { drawCards } from "../context/emit";
 
 const Page = () => {
   const { id, gameData } = useSocketContext();
   console.log("🚀 ~ file: page.tsx:9 ~ Page ~ id:", id);
   console.log("🚀 ~ file: page.tsx:9 ~ Page ~ test:", gameData);
 
+  const handleClick = () => {
+    drawCards(id);
+  };
+
   return (
     <main className="flex flex-row w-full min-h-screen items-center justify-center p-4 max-w-4xl m-auto">
       <NoSSR>
         {id ? (
           <section>
-            <Image
-              unoptimized
-              width={200}
-              height={300}
-              src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWFkZjV1MW9najVkdzByY25oMG1uMmpxNDI1YWI1emk5aW84MXJpZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/65AOSg4ntqDzDJHUh4/giphy.gif"
-              alt="meme"
-            />
+            <button className="btn" onClick={handleClick}>
+              draw
+            </button>
+            <div className="flex justify-center items-center rounded-box">
+              {gameData?.players[id]?.hand.map((card: any) => {
+                return (
+                  <div key={card.id} className="">
+                    <Image
+                      className="object-cover h-52 w-52"
+                      unoptimized
+                      width={200}
+                      height={200}
+                      src={card.src}
+                      alt={card.slug}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </section>
         ) : (
           <Login />
