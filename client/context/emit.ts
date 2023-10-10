@@ -8,3 +8,12 @@ export const drawCards = (id: string) => {
   socket.emit("draw-card", id);
 };
 
+export const playerReady = ({
+  playerId,
+  selectedCard,
+}: {
+  playerId: string;
+  selectedCard: number;
+}) => {
+  socket.emit("player-ready", { playerId, selectedCard });
+};

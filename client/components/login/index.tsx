@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 
@@ -33,6 +33,7 @@ const Login = () => {
               className="input input-bordered input-primary w-full"
               placeholder="Type your nickname"
               name="nickname"
+              id="name"
               onChange={handleInputChange}
             />
             <button className="btn btn-primary" onClick={handleSubmit}>

@@ -1,7 +1,12 @@
-type Draw = {
-  ctx: CanvasRenderingContext2D
-  currentPoint: Point
-  prevPoint: Point | null
-}
-
-type Point = { x: number; y: number }
+export type PlayersT = {
+  [key: string]: {
+    score: number;
+    hand: {
+      src: string;
+      id: string;
+      slug: string;
+    }[];
+    name: string;
+    ready: boolean;
+  };
+};

@@ -10,7 +10,6 @@ const SocketProvider: React.FC<any> = (props) => {
 
   useEffect(() => {
     socket.on("game-update", (data) => {
-      console.log("🚀 ~ file: index.tsx:13 ~ socket.on ~ data:", data);
       setValue(data);
     });
 

@@ -1,20 +1,20 @@
+export type GameT = {
+  phase: number;
+  // 0 = "waiting" | 1 = "selection" | 2 = "vote" | 3 = "result"
+  phrase: string[];
+  deck: CardT[];
+  players: PlayersT;
+  votingCards: CardT[];
+};
+
 export type PlayersT = {
   [key: string]: {
     score: number;
     hand: CardT[];
     name: string;
+    ready: boolean;
+    selectedCard?: number;
   };
-};
-
-type PhaseT = "waiting" | "selection" | "vote";
-// waiting - Game stopped waiting players to join (first player can decide when start)
-// selection - Game is already started, players can read the phrase
-
-export type GameT = {
-  phase: PhaseT;
-  phrase: string[];
-  deck: CardT[];
-  players: PlayersT;
 };
 
 export type CardT = {
