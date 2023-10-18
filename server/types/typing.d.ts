@@ -12,7 +12,7 @@ export type PlayersT = {
     score: number;
     hand: CardT[];
     name: string;
-    ready: boolean;
+    ready: number;
     selectedCard?: number;
   };
 };
@@ -20,5 +20,6 @@ export type PlayersT = {
 export type CardT = {
   id: string;
   src: string;
+  votes?: number;
   slug?: string;
 };

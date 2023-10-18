@@ -26,11 +26,11 @@ let game: GameT = {
 
 const shuffle = () => game.deck.sort(() => Math.random() - 0.5);
 
-const draw = (deleteCount = 5, start = 0) =>
+const draw = (deleteCount = 1, start = 0) =>
   game.deck.splice(start, deleteCount);
 
 io.on("connection", (socket) => {
-  console.log("🚀 ~ file: index.ts:25 ~ game:", game?.players);
+  console.log("🚀 ~ file: index.ts:33 ~ io.on ~ socket:", socket.id);
 
   socket.on("player-joined", (playerName: string) => {
     const playerDraw = draw(5);
@@ -39,46 +39,64 @@ io.on("connection", (socket) => {
       score: 0,
       hand: playerDraw,
       name: playerName,
-      ready: false,
+      ready: 0,
     };
 
     io.sockets.emit("game-update", game);
   });
 
-  socket.on("player-ready", ({ playerId, selectedCardIndex }) => {
-    const player = game.players[playerId];
+  socket.on(
+    "player-ready",
+    ({
+      playerId,
+      selectedCardIndex,
+    }: {
+      playerId: string;
+      selectedCardIndex: number;
+    }) => {
+      const player = game.players[playerId];
+      const selectedCard = player.hand[selectedCardIndex];
 
-    player.ready = true;
-    // Add card to the voting cards array
-    game.votingCards.push(player.hand[selectedCardIndex]);
-    // Remove selected card from players hand
-    player.hand.splice(selectedCardIndex, 1);
+      player.ready += 1;
 
-    const isAllPlayersReady = Object.values(game.players)?.every(
-      (player) => player.ready === true
-    );
+      if (game.phase === 0) {
+        // Remove selected card from players hand
+        player.hand.splice(selectedCardIndex, 1);
+        // Add card to the voting cards array
+        game.votingCards.push({ ...selectedCard, votes: 0 });
+      }
 
-    if (isAllPlayersReady) {
-      // Update game phase
-      game.phase += 1;
-      // Draw new card for player
-      draw(1);
+      if (game.phase === 1) {
+        game.votingCards.at(selectedCardIndex)!.votes! += 1;
+      }
+
+      const isAllPlayersReady = Object.values(game.players)?.every(
+        (player) => player.ready !== game.phase
+      );
+
+      console.log("🚀 ~ file: index.ts:73 ~ io.on ~ game.phase:", game.phase);
+      console.log(
+        "🚀 ~ file: index.ts:73 ~ io.on ~ player.ready:",
+        player.ready
+      );
+
+      console.log(
+        "🚀 ~ file: index.ts:74 ~ io.on ~ isAllPlayersReady:",
+        isAllPlayersReady
+      );
+
+      if (isAllPlayersReady) {
+        game.phase += 1;
+        const drawCard = draw();
+        player.hand.push(...drawCard);
+      }
+
       io.sockets.emit("game-update", game);
     }
-  });
+  );
 
-  socket.on("draw-card", (player) => {
-    const cardsOnHand = game.players[player].hand.length;
-    const maxOnHand = 5;
-    const cardsToBuy = maxOnHand - cardsOnHand;
-
-    if (cardsToBuy > 0) {
-      const playerDraw = draw(cardsToBuy);
-
-      game.players[player].hand = playerDraw;
-    }
-
-    io.sockets.emit("game-update", game);
+  socket.on("new-game", () => {
+    game.votingCards = [];
   });
 
   socket.on("disconnect", () => {

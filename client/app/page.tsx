@@ -1,64 +1,70 @@
 "use client";
-import { useState } from "react";
 import NoSSR from "react-no-ssr";
-import Image from "next/image";
 
-import Login from "../components/login";
-import Scoreboard from "../components/scoreboard";
-import { useSocketContext } from "../context";
 import { playerReady } from "../context/emit";
+import { useSocketContext } from "../context";
+
+import { Login, Scoreboard, Card } from "../components";
 
 const Page = () => {
-  const { id, gameData } = useSocketContext();
-
-  const [selectedCard, setSelectedCard] = useState(0);
+  const { id, gameData, selectedCard } = useSocketContext();
 
   const player = gameData?.players[id];
 
-  console.log(
-    "🚀 ~ file: page.tsx:19 ~ Page ~ gameData?.players:",
-    gameData?.players
-  );
-
-  console.log("🚀 ~ file: page.tsx:13 ~ Page ~ selectedCard:", selectedCard);
+  console.log("🚀 ~ file: page.tsx:16 ~ Page ~ gameData:", gameData);
 
   const handleClick = () => {
-    playerReady({ playerId: id, selectedCard });
+    playerReady({ playerId: id, selectedCardIndex: selectedCard });
   };
 
   return (
     <main className="relative">
-      <div className="flex flex-row w-full min-h-screen items-center justify-center p-4 max-w-4xl m-auto">
+      <div className="flex flex-row w-full min-h-screen p-4 max-w-4xl m-auto">
         <NoSSR>
           {player ? (
             <section className="flex flex-col gap-8">
               <Scoreboard players={gameData?.players} playerId={id} />
-              <h1 className="text-5xl font-bold">{gameData?.phrase[0]}</h1>
+              <article>
+                <h1 className="text-5xl font-bold">{gameData?.phrase[0]}</h1>
 
-              <div className="flex justify-center items-center rounded-box">
-                {player?.hand?.map((card: any, index: number) => {
-                  return (
-                    <button
-                      key={card.id}
-                      className="focus:ring focus:border-primary"
-                      onClick={() => setSelectedCard(index)}
-                    >
-                      <Image
-                        className="object-cover h-52 w-52"
-                        unoptimized
-                        width={200}
-                        height={200}
-                        src={card.src}
-                        alt={card.slug}
+                {/* {gameData.phase === 1 && (
+                  <>
+                    Not it is time to vote:
+                    <Cards
+                      cards={gameData?.votingCards}
+                      disabled={gameData?.phase !== 1}
+                      handleSelectedCard={handleSelectedCard}
+                      selectedCardIndex={selectedCard}
+                    />
+                  </>
+                )} */}
+              </article>
+
+              {/* {gameData.phase === 2 && (
+                <Cards
+                  cards={gameData?.votingCards.sort(
+                    (cardA: any, cardB: any) => cardB.votes - cardA.votes
+                  )}
+                  disabled={gameData?.phase === 2}
+                  handleSelectedCard={handleSelectedCard}
+                  selectedCardIndex={selectedCard}
+                />
+              )} */}
+
+              <div className="fixed inset-x-0 bottom-10 flex flex-col justify-center items-center gap-4">
+                <div className="flex justify-center items-center rounded-box gap-2">
+                  {player?.hand?.map((card: any, index: number) => {
+                    return (
+                      <Card
+                        key={card.id}
+                        card={{ ...card, index }}
+                        handleClick={handleClick}
+                        disabled={gameData?.phase !== 0}
                       />
-                    </button>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-
-              <button className="btn" onClick={handleClick}>
-                ready
-              </button>
             </section>
           ) : (
             <Login />

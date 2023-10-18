@@ -10,10 +10,10 @@ export const drawCards = (id: string) => {
 
 export const playerReady = ({
   playerId,
-  selectedCard,
+  selectedCardIndex,
 }: {
   playerId: string;
-  selectedCard: number;
+  selectedCardIndex: number;
 }) => {
-  socket.emit("player-ready", { playerId, selectedCard });
+  socket.emit("player-ready", { playerId, selectedCardIndex });
 };
