@@ -20,7 +20,7 @@ const Login = () => {
   };
 
   return (
-    <section className="flex w-full h-full">
+    <section className="flex w-full h-full items-center justify-center">
       <div className="grid flex-grow card bg-base-300 rounded-box place-items-center w-full">
         <div className="flex flex-col p-4 gap-4 w-full">
           <label

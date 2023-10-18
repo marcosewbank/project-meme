@@ -8,8 +8,8 @@ type Props = {
   disabled: boolean;
 };
 
-const Card = ({ card, handleClick, disabled }: Props) => {
-  const { selectedCard, handleSelectedCard, gameData } = useSocketContext();
+const Card = ({ card, ...rest }: Props) => {
+  const { selectedCard, handleSelectedCard } = useSocketContext();
 
   const isSelectedCard = selectedCard === card.index;
 
@@ -20,16 +20,12 @@ const Card = ({ card, handleClick, disabled }: Props) => {
         isSelectedCard && "scale-105"
       }`}
       onClick={() => {
-        if (isSelectedCard) {
-          handleClick();
-        }
-
         handleSelectedCard(card.index);
       }}
-      disabled={disabled}
+      {...rest}
     >
       <Image
-        className={`object-cover h-64 w-52 rounded-md border-4 ${
+        className={`object-cover h-64 w-52 rounded-xl border-8 ${
           isSelectedCard ? "border-secondary" : ""
         }`}
         unoptimized

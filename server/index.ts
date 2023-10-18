@@ -30,8 +30,6 @@ const draw = (deleteCount = 1, start = 0) =>
   game.deck.splice(start, deleteCount);
 
 io.on("connection", (socket) => {
-  console.log("🚀 ~ file: index.ts:33 ~ io.on ~ socket:", socket.id);
-
   socket.on("player-joined", (playerName: string) => {
     const playerDraw = draw(5);
 
@@ -55,7 +53,12 @@ io.on("connection", (socket) => {
       selectedCardIndex: number;
     }) => {
       const player = game.players[playerId];
+      console.log("🚀 ~ file: index.ts:56 ~ io.on ~ player:", player);
       const selectedCard = player.hand[selectedCardIndex];
+      console.log(
+        "🚀 ~ file: index.ts:58 ~ io.on ~ selectedCard:",
+        selectedCard
+      );
 
       player.ready += 1;
 
@@ -74,17 +77,6 @@ io.on("connection", (socket) => {
         (player) => player.ready !== game.phase
       );
 
-      console.log("🚀 ~ file: index.ts:73 ~ io.on ~ game.phase:", game.phase);
-      console.log(
-        "🚀 ~ file: index.ts:73 ~ io.on ~ player.ready:",
-        player.ready
-      );
-
-      console.log(
-        "🚀 ~ file: index.ts:74 ~ io.on ~ isAllPlayersReady:",
-        isAllPlayersReady
-      );
-
       if (isAllPlayersReady) {
         game.phase += 1;
         const drawCard = draw();
@@ -94,10 +86,6 @@ io.on("connection", (socket) => {
       io.sockets.emit("game-update", game);
     }
   );
-
-  socket.on("new-game", () => {
-    game.votingCards = [];
-  });
 
   socket.on("disconnect", () => {
     delete game.players[socket.id];
