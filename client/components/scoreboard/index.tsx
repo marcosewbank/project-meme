@@ -6,7 +6,7 @@ type Props = {
   playerId: string;
 };
 
-const index = ({ players, playerId }: Props) => {
+const Scoreboard = ({ players, playerId }: Props) => {
   return (
     <section className="overflow-x-auto bg-base-200 rounded-md pt-2 pb-4 px-4 w-fit absolute right-8 top-8">
       <h2 className="flex justify-center opacity-75 b">Scoreboard</h2>
@@ -22,7 +22,7 @@ const index = ({ players, playerId }: Props) => {
           {Object.values(players)?.map((playerArray, index) => {
             const { name, ready, score } = playerArray;
 
-            const isPlayerReady = ready ? "b" : "";
+            const isPlayerReady = ready ? "b text-emerald-400" : "";
             const currentPlayer =
               players[playerId]?.name === name ? "text-slate-50" : "";
 
@@ -43,4 +43,4 @@ const index = ({ players, playerId }: Props) => {
   );
 };
 
-export default index;
+export default Scoreboard;

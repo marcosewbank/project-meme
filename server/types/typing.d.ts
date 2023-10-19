@@ -1,10 +1,9 @@
 export type GameT = {
   phase: number;
-  // 0 = "waiting" | 1 = "selection" | 2 = "vote" | 3 = "result"
   phrase: string[];
   deck: CardT[];
   players: PlayersT;
-  votingCards: CardT[];
+  votingCards: VotedCardT[];
 };
 
 export type PlayersT = {
@@ -20,6 +19,10 @@ export type PlayersT = {
 export type CardT = {
   id: string;
   src: string;
-  votes?: number;
   slug?: string;
 };
+
+export interface VotedCardT extends CardT {
+  votes: string[];
+  player: string;
+}

@@ -7,11 +7,6 @@ const SocketContext = createContext<any>(null);
 
 const SocketProvider: React.FC<any> = (props) => {
   const [value, setValue] = useState();
-  const [selectedCard, setSelectedCard] = useState<number>();
-
-  const handleSelectedCard = (index: number) => {
-    setSelectedCard(index);
-  };
 
   useEffect(() => {
     socket.on("game-update", (data) => {
@@ -28,8 +23,6 @@ const SocketProvider: React.FC<any> = (props) => {
       value={{
         id: socket.id,
         gameData: value,
-        selectedCard,
-        handleSelectedCard,
       }}
     >
       {props.children}

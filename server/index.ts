@@ -53,24 +53,30 @@ io.on("connection", (socket) => {
       selectedCardIndex: number;
     }) => {
       const player = game.players[playerId];
-      console.log("🚀 ~ file: index.ts:56 ~ io.on ~ player:", player);
       const selectedCard = player.hand[selectedCardIndex];
-      console.log(
-        "🚀 ~ file: index.ts:58 ~ io.on ~ selectedCard:",
-        selectedCard
-      );
 
       player.ready += 1;
 
       if (game.phase === 0) {
-        // Remove selected card from players hand
         player.hand.splice(selectedCardIndex, 1);
-        // Add card to the voting cards array
-        game.votingCards.push({ ...selectedCard, votes: 0 });
+
+        game.votingCards.push({
+          ...selectedCard,
+          votes: [],
+          player: playerId,
+        });
       }
 
       if (game.phase === 1) {
-        game.votingCards.at(selectedCardIndex)!.votes! += 1;
+        game?.votingCards?.at(selectedCardIndex)?.votes.push(playerId);
+      }
+
+      if (game.phase === 2) {
+        for (let votedCards of game.votingCards) {
+          if (votedCards?.player) {
+            game.players[votedCards.player].score += votedCards.votes.length;
+          }
+        }
       }
 
       const isAllPlayersReady = Object.values(game.players)?.every(
@@ -79,8 +85,14 @@ io.on("connection", (socket) => {
 
       if (isAllPlayersReady) {
         game.phase += 1;
-        const drawCard = draw();
-        player.hand.push(...drawCard);
+
+        if (game.phase === 3) {
+          const drawCard = draw();
+          player.hand.push(...drawCard);
+          game.votingCards = [];
+          game.phase = 0;
+          game.phrase.shift();
+        }
       }
 
       io.sockets.emit("game-update", game);

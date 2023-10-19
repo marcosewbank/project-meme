@@ -13,7 +13,7 @@ export const playerReady = ({
   selectedCardIndex,
 }: {
   playerId: string;
-  selectedCardIndex: number;
+  selectedCardIndex?: number;
 }) => {
   socket.emit("player-ready", { playerId, selectedCardIndex });
 };
