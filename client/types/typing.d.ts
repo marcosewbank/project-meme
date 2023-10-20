@@ -7,6 +7,6 @@ export type PlayersT = {
       slug: string;
     }[];
     name: string;
-    ready: boolean;
+    ready: number;
   };
 };

@@ -72,11 +72,9 @@ io.on("connection", (socket) => {
       }
 
       if (game.phase === 2) {
-        for (let votedCards of game.votingCards) {
-          if (votedCards?.player) {
-            game.players[votedCards.player].score += votedCards.votes.length;
-          }
-        }
+        player.ready = 0
+        const drawCard = draw();
+        player.hand.push(...drawCard);
       }
 
       const isAllPlayersReady = Object.values(game.players)?.every(
@@ -86,9 +84,15 @@ io.on("connection", (socket) => {
       if (isAllPlayersReady) {
         game.phase += 1;
 
+        if (game.phase === 2) {
+          for (let votedCards of game.votingCards) {
+            if (votedCards?.player) {
+              game.players[votedCards.player].score += votedCards.votes.length;
+            }
+          }
+        }
+
         if (game.phase === 3) {
-          const drawCard = draw();
-          player.hand.push(...drawCard);
           game.votingCards = [];
           game.phase = 0;
           game.phrase.shift();
