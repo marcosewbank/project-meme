@@ -1,2 +1,3 @@
 # project-meme
-Project meme
+
+Meme based card game
